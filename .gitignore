@@ -1,0 +1,14 @@
+#IDE related
+*.iml
+.idea/*
+#!idea/runConfigurations
+
+#npm
+node_modules/
+bower_components/
+
+#Build related
+target/
+
+#macOS
+.DS_Store
