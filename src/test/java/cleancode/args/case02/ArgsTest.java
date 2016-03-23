@@ -1,17 +1,17 @@
 package cleancode.args.case02;
 
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ArgsTest {
 
-    Args args;
+    Args testedObject;
+    final String validSchema = "l,p#,d*";
+    final String[] validCommandArgs = {"-l", "true", "-d", "folder1"};
 
     @org.junit.Before
     public void setUp() throws Exception {
-        String[] commandArgs = {"-l", "true", "-d", "folder1"};
-        args = new Args("l,p#,d*", commandArgs);
+        testedObject = new Args("l,p#,d*", validCommandArgs);
     }
 
     @org.junit.After
@@ -20,10 +20,30 @@ public class ArgsTest {
     }
 
     @Test
-    public void isValid() {
+    public void constructor() {
+        assertEquals(validSchema, testedObject.getSchema());
+        assertArrayEquals(validCommandArgs, testedObject.getArgs());
+    }
 
-        assertEquals(true, args.isValid());
-        args.setValid(false);
-        assertEquals(false, args.isValid());
+    @Test
+    public void isValid() {
+        assertEquals(true, testedObject.isValid());
+        testedObject.setValid(false);
+        assertEquals(false, testedObject.isValid());
+    }
+
+    @Test
+    public void getBoolean() {
+        assertEquals(true, testedObject.getBoolean('l'));
+        assertEquals(false, testedObject.getBoolean('d'));
+        assertEquals(false, testedObject.getBoolean('x'));
+        // not verifying call to falseIfNull since its private
+    }
+
+    @Test
+    public void getString() {
+        assertEquals("folder1", testedObject.getString('d'));
+        assertEquals("", testedObject.getString('x'));
+        // not verifying call to falseIfNull since its private
     }
 }
