@@ -16,7 +16,6 @@ public class ArgsTest {
 
     @org.junit.After
     public void tearDown() throws Exception {
-
     }
 
     @Test
