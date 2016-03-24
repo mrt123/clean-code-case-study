@@ -9,21 +9,21 @@ public @Data
 class Args {
     private String schema;
     private String[] args;
-    private boolean valid = true;     // step02
+    private boolean valid = true;     
     private Set<Character> unexpectedArguments = new TreeSet<Character>();
-    private Map<Character, ArgumentMarshaler> booleanArgs = new HashMap<Character, ArgumentMarshaler>();
+    private Map<Character, ArgumentMarshaler> booleanArgs = new HashMap<Character, ArgumentMarshaler>();  // step03
 
-    private Map<Character, String> stringArgs = new HashMap<Character, String>();   // step02
+    private Map<Character, String> stringArgs = new HashMap<Character, String>();   
 
-    private Set<Character> argsFound = new HashSet<Character>();    // step02
-    private int currentArgument;                                     // step02
-    private char errorArgument = '\0';                               // step02
+    private Set<Character> argsFound = new HashSet<Character>();    
+    private int currentArgument;                                     
+    private char errorArgument = '\0';                               
 
-    enum ErrorCode {                 // step02
+    enum ErrorCode {                 
         OK, MISSING_STRING
     }
 
-    private ErrorCode errorCode = ErrorCode.OK;          // step02
+    private ErrorCode errorCode = ErrorCode.OK;          
 
     public Args(String schema, String[] args) throws ParseException {
         this.schema = schema;
@@ -35,7 +35,7 @@ class Args {
         return valid;
     }
 
-    private boolean parse() throws ParseException {   // step02 now throws ParseException
+    private boolean parse() throws ParseException {
         if (schema.length() == 0 && args.length == 0)
             return true;
         parseSchema();
@@ -53,7 +53,7 @@ class Args {
         return true;
     }
 
-    private void parseSchemaElement(String element) throws ParseException {  // step02 now throws ParseException
+    private void parseSchemaElement(String element) throws ParseException {
         char elementId = element.charAt(0);  // element = "l" or "d*"
         String elementTail = element.substring(1);   // elementTail = ""  or "*"
         validateSchemaElementId(elementId);  // elementId = "l" or "d"
@@ -76,16 +76,16 @@ class Args {
         return elementTail.equals("*");
     }
 
-    private boolean isBooleanSchemaElement(String elementTail) {  // step02 new method (previously one liner)
+    private boolean isBooleanSchemaElement(String elementTail) {
         return elementTail.length() == 0;
     }
 
     private void parseBooleanSchemaElement(char elementId) {
-        booleanArgs.put(elementId, new BooleanArgumentMarshaler());
+        booleanArgs.put(elementId, new BooleanArgumentMarshaler());  // step03
     }
 
     private boolean parseArguments() {
-        for (currentArgument = 0; currentArgument < args.length; currentArgument++) {  // step02 introduced currentArgument
+        for (currentArgument = 0; currentArgument < args.length; currentArgument++) {
             String arg = args[currentArgument];
             parseArgument(arg);
         }
@@ -112,7 +112,7 @@ class Args {
         }
     }
 
-    private boolean setArgument(char argChar) {   // step02 - new method
+    private boolean setArgument(char argChar) {
         boolean set = true;
         if (isBoolean(argChar))
             setBooleanArg(argChar, true);   // init the booleanArgs hashMap
@@ -123,7 +123,7 @@ class Args {
         return set;
     }
 
-    private void setStringArg(char argChar, String s) {   // step02 - new method
+    private void setStringArg(char argChar, String s) {
         currentArgument++;   // increment to slide, eg: from "d" to "dirName"
         try {
             stringArgs.put(argChar, args[currentArgument]);
@@ -139,7 +139,7 @@ class Args {
     }
 
     private void setBooleanArg(char argChar, boolean value) {
-        booleanArgs.get(argChar).setBoolean(value);
+        booleanArgs.get(argChar).setBoolean(value);    // step03
     }
 
     private boolean isBoolean(char argChar) {
@@ -181,7 +181,7 @@ class Args {
     }
 
     public boolean getBoolean(char arg) {
-        return falseIfNull(booleanArgs.get(arg).getBoolean());
+        return falseIfNull(booleanArgs.get(arg).getBoolean());   // step03
     }
 
     private boolean falseIfNull(Boolean b) {
