@@ -180,13 +180,12 @@ class Args {
         return message.toString();
     }
 
-    public boolean getBoolean(char arg) {
-        return falseIfNull(booleanArgs.get(arg).getBoolean());   // step03
+    public boolean getBoolean(char arg) {    // step03 removed call to falseIfNull
+        ArgumentMarshaler am = booleanArgs.get(arg);
+        return am != null && am.getBoolean();
     }
 
-    private boolean falseIfNull(Boolean b) {
-        return b == null ? false : b;
-    }
+    // step03 removed falseIfNull method
 
     public String getString(char arg) {
         return blankIfNull(stringArgs.get(arg));
