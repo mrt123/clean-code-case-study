@@ -1,4 +1,4 @@
-package cleancode.args.step03;   // TODO: description of step here
+package cleancode.args.step03; // introduced ArgumentMarshaler and updated handling of boolean arg to use it
 
 import lombok.Data;
 
