@@ -1,4 +1,4 @@
-package cleancode.args.case02;
+package cleancode.args.step02;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

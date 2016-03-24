@@ -1,4 +1,4 @@
-package cleancode.args.case01;
+package cleancode.args.step01;
 
 import java.util.HashMap;
 import java.util.Map;

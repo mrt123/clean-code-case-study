@@ -1,4 +1,4 @@
-package cleancode.args.case02;   // added string Arg
+package cleancode.args.step02;   // step02 string Arg
 
 import lombok.Data;
 
@@ -8,21 +8,21 @@ import java.util.*;
 public @Data class Args {
     private String schema;
     private String[] args;
-    private boolean valid = true;     // modified
+    private boolean valid = true;     // step02
     private Set<Character> unexpectedArguments = new TreeSet<Character>();
     private Map<Character, Boolean> booleanArgs = new HashMap<Character, Boolean>();
 
-    private Map<Character, String> stringArgs = new HashMap<Character, String>();   // added
+    private Map<Character, String> stringArgs = new HashMap<Character, String>();   // step02
 
-    private Set<Character> argsFound = new HashSet<Character>();    // added
-    private int currentArgument;                                     // added
-    private char errorArgument = '\0';                               // added
+    private Set<Character> argsFound = new HashSet<Character>();    // step02
+    private int currentArgument;                                     // step02
+    private char errorArgument = '\0';                               // step02
 
-    enum ErrorCode {                 // added
+    enum ErrorCode {                 // step02
         OK, MISSING_STRING
     }
 
-    private ErrorCode errorCode = ErrorCode.OK;          // added
+    private ErrorCode errorCode = ErrorCode.OK;          // step02
 
     public Args(String schema, String[] args) throws ParseException {
         this.schema = schema;
@@ -34,7 +34,7 @@ public @Data class Args {
         return valid;
     }
 
-    private boolean parse() throws ParseException {   // now throws ParseException
+    private boolean parse() throws ParseException {   // step02 now throws ParseException
         if (schema.length() == 0 && args.length == 0)
             return true;
         parseSchema();
@@ -52,7 +52,7 @@ public @Data class Args {
         return true;
     }
 
-    private void parseSchemaElement(String element) throws ParseException {  // now throws ParseException
+    private void parseSchemaElement(String element) throws ParseException {  // step02 now throws ParseException
         char elementId = element.charAt(0);  // element = "l" or "d*"
         String elementTail = element.substring(1);   // elementTail = ""  or "*"
         validateSchemaElementId(elementId);  // elementId = "l" or "d"
@@ -75,7 +75,7 @@ public @Data class Args {
         return elementTail.equals("*");
     }
 
-    private boolean isBooleanSchemaElement(String elementTail) {  // new method (previously one liner)
+    private boolean isBooleanSchemaElement(String elementTail) {  // step02 new method (previously one liner)
         return elementTail.length() == 0;
     }
 
@@ -84,7 +84,7 @@ public @Data class Args {
     }
 
     private boolean parseArguments() {
-        for (currentArgument = 0; currentArgument < args.length; currentArgument++) {  // introduced currentArgument
+        for (currentArgument = 0; currentArgument < args.length; currentArgument++) {  // step02 introduced currentArgument
             String arg = args[currentArgument];
             parseArgument(arg);
         }
@@ -111,7 +111,7 @@ public @Data class Args {
         }
     }
 
-    private boolean setArgument(char argChar) {
+    private boolean setArgument(char argChar) {   // step02 - new method
         boolean set = true;
         if (isBoolean(argChar))
             setBooleanArg(argChar, true);   // init the booleanArgs hashMap
@@ -122,8 +122,8 @@ public @Data class Args {
         return set;
     }
 
-    private void setStringArg(char argChar, String s) {
-        currentArgument++;   // increment to slide from "d" to "dirName"
+    private void setStringArg(char argChar, String s) {   // step02 - new method
+        currentArgument++;   // increment to slide, eg: from "d" to "dirName"
         try {
             stringArgs.put(argChar, args[currentArgument]);
         } catch (ArrayIndexOutOfBoundsException e) {

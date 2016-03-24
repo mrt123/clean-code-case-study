@@ -1,4 +1,4 @@
-package cleancode.args.step04;
+package cleancode.args.step03;
 
 public class IntegerArgumentMarshaler extends ArgumentMarshaler {
 }
