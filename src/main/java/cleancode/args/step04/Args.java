@@ -126,7 +126,7 @@ class Args {
     private void setStringArg(char argChar, String s) {
         currentArgument++;   // increment to slide, eg: from "d" to "dirName"
         try {
-            stringArgs.get(argChar).setString(args[currentArgument]);
+            stringArgs.get(argChar).setString(args[currentArgument]);  // step04
         } catch (ArrayIndexOutOfBoundsException e) {
             valid = false;
             errorArgument = argChar;
@@ -185,7 +185,7 @@ class Args {
         return am != null && am.getBoolean();
     }
 
-
+    // step04
     public String getString(char arg) {
         ArgumentMarshaler am = stringArgs.get(arg);
         return am == null ? "" : am.getString();

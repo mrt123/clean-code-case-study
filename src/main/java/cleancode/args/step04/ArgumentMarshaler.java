@@ -2,7 +2,7 @@ package cleancode.args.step04;
 
 public class ArgumentMarshaler {
     private boolean booleanValue = false;
-    private String stringValue;
+    private String stringValue;   // step04
 
     public void setBoolean(boolean value) {
         booleanValue = value;
@@ -16,6 +16,8 @@ public class ArgumentMarshaler {
         stringValue = s;
     }
 
+
+    // step04
     public String getString() {
         return stringValue == null ? "" : stringValue;
     }
