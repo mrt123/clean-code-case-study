@@ -1,4 +1,4 @@
-package cleancode.args.step04; // introduced ArgumentMarshaler and updated handling of boolean arg to use it
+package cleancode.args.step04; // desc: move String functionality to ArgumentMarshaller
 
 import lombok.Data;
 
@@ -11,9 +11,9 @@ class Args {
     private String[] args;
     private boolean valid = true;     
     private Set<Character> unexpectedArguments = new TreeSet<Character>();
-    private Map<Character, ArgumentMarshaler> booleanArgs = new HashMap<Character, ArgumentMarshaler>();  // step03
+    private Map<Character, ArgumentMarshaler> booleanArgs = new HashMap<Character, ArgumentMarshaler>();
 
-    private Map<Character, String> stringArgs = new HashMap<Character, String>();   
+    private Map<Character, ArgumentMarshaler> stringArgs = new HashMap<Character, ArgumentMarshaler>();   // step04
 
     private Set<Character> argsFound = new HashSet<Character>();    
     private int currentArgument;                                     
@@ -69,7 +69,7 @@ class Args {
     }
 
     private void parseStringSchemaElement(char elementId) {
-        stringArgs.put(elementId, "");
+        stringArgs.put(elementId, new StringArgumentMarshaler());   // step04
     }
 
     private boolean isStringSchemaElement(String elementTail) {
@@ -81,7 +81,7 @@ class Args {
     }
 
     private void parseBooleanSchemaElement(char elementId) {
-        booleanArgs.put(elementId, new BooleanArgumentMarshaler());  // step03
+        booleanArgs.put(elementId, new BooleanArgumentMarshaler());
     }
 
     private boolean parseArguments() {
@@ -126,7 +126,7 @@ class Args {
     private void setStringArg(char argChar, String s) {
         currentArgument++;   // increment to slide, eg: from "d" to "dirName"
         try {
-            stringArgs.put(argChar, args[currentArgument]);
+            stringArgs.get(argChar).setString(args[currentArgument]);
         } catch (ArrayIndexOutOfBoundsException e) {
             valid = false;
             errorArgument = argChar;
@@ -139,7 +139,7 @@ class Args {
     }
 
     private void setBooleanArg(char argChar, boolean value) {
-        booleanArgs.get(argChar).setBoolean(value);    // step03
+        booleanArgs.get(argChar).setBoolean(value);
     }
 
     private boolean isBoolean(char argChar) {
@@ -180,19 +180,15 @@ class Args {
         return message.toString();
     }
 
-    public boolean getBoolean(char arg) {    // step03 removed call to falseIfNull
+    public boolean getBoolean(char arg) {
         ArgumentMarshaler am = booleanArgs.get(arg);
         return am != null && am.getBoolean();
     }
 
-    // step03 removed falseIfNull method
 
     public String getString(char arg) {
-        return blankIfNull(stringArgs.get(arg));
-    }
-
-    private String blankIfNull(String s) {
-        return s == null ? "" : s;
+        ArgumentMarshaler am = stringArgs.get(arg);
+        return am == null ? "" : am.getString();
     }
 
     public boolean has(char arg) {
