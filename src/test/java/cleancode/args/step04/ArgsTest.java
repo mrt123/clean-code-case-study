@@ -42,6 +42,8 @@ public class ArgsTest {
         assertEquals(true, testedObject.getBoolean(existingArgument1));
         assertEquals(false, testedObject.getBoolean(existingArgument2));
         assertEquals(false, testedObject.getBoolean(nonExistingArgument));
+
+        assertEquals("folder1", testedObject.getString(existingArgument2));
         // not verifying call to falseIfNull since its private
     }
 

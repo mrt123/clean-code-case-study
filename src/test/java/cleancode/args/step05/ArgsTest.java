@@ -9,7 +9,7 @@ public class ArgsTest {
 
     Args testedObject;
     final String validSchema = "l,p#,d*";
-    final String[] validCommandArgs = {"-l", "true", "-d", "folder1"};
+    final String[] validCommandArgs = {"-l", "true", "-d", "folder1", "-p", "8080"};
 
     @org.junit.Before
     public void setUp() throws Exception {
@@ -37,11 +37,15 @@ public class ArgsTest {
     public void getBoolean() {
         char existingArgument1 = 'l';
         char existingArgument2= 'd';
+        char existingArgument3= 'p';
         char nonExistingArgument = 'y';
 
         assertEquals(true, testedObject.getBoolean(existingArgument1));
-        assertEquals(false, testedObject.getBoolean(existingArgument2));
         assertEquals(false, testedObject.getBoolean(nonExistingArgument));
+
+        assertEquals("folder1", testedObject.getString(existingArgument2));
+        assertEquals(8080, testedObject.getInt(existingArgument3));
+
         // not verifying call to falseIfNull since its private
     }
 

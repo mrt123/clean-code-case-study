@@ -1,4 +1,4 @@
-package cleancode.args.step05; // desc: move Integer functionality to ArgumentMarshaller
+package cleancode.args.step05; // desc: introduce Integer functionality
 
 import lombok.Data;
 
@@ -9,18 +9,19 @@ public @Data
 class Args {
     private String schema;
     private String[] args;
-    private boolean valid = true;     
+    private boolean valid = true;
     private Set<Character> unexpectedArguments = new TreeSet<Character>();
-    private Map<Character, ArgumentMarshaler> booleanArgs = new HashMap<Character, ArgumentMarshaler>();
 
+    private Map<Character, ArgumentMarshaler> booleanArgs = new HashMap<Character, ArgumentMarshaler>();
     private Map<Character, ArgumentMarshaler> stringArgs = new HashMap<Character, ArgumentMarshaler>();
+    private Map<Character, ArgumentMarshaler> intArgs = new HashMap<Character, ArgumentMarshaler>();  // step05
 
     private Set<Character> argsFound = new HashSet<Character>();
     private int currentArgument;
     private char errorArgument = '\0';
 
     enum ErrorCode {
-        OK, MISSING_STRING
+        OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER
     }
 
     private ErrorCode errorCode = ErrorCode.OK;
@@ -59,6 +60,7 @@ class Args {
         validateSchemaElementId(elementId);  // elementId = "l" or "d"
         if (isBooleanSchemaElement(elementTail)) parseBooleanSchemaElement(elementId);  // true if elementTail =""
         else if (isStringSchemaElement(elementTail)) parseStringSchemaElement(elementId);  // true if elementTail ="*"
+        else if (isIntegerSchemaElement(elementTail)) parseIntegerSchemaElement(elementId);  // true if elementTail ="#"   // step05
     }
 
     private void validateSchemaElementId(char elementId) throws ParseException {
@@ -82,6 +84,16 @@ class Args {
 
     private void parseBooleanSchemaElement(char elementId) {
         booleanArgs.put(elementId, new BooleanArgumentMarshaler());
+    }
+
+
+    private boolean isIntegerSchemaElement(String elementTail) {
+        return elementTail.equals("#");
+    }
+
+    // step05
+    private void parseIntegerSchemaElement(char elementId) {
+        intArgs.put(elementId, new IntegerArgumentMarshaler());
     }
 
     private boolean parseArguments() {
@@ -118,6 +130,8 @@ class Args {
             setBooleanArg(argChar, true);   // init the booleanArgs hashMap
         else if (isString(argChar))
             setStringArg(argChar, "");
+        else if (isInt(argChar))
+            setIntArg(argChar);
         else
             set = false;
         return set;
@@ -131,6 +145,27 @@ class Args {
             valid = false;
             errorArgument = argChar;
             errorCode = ErrorCode.MISSING_STRING;
+        }
+    }
+
+    private boolean isInt(char argChar) {
+        return intArgs.containsKey(argChar);
+    }
+
+    // step05
+    private void setIntArg(char argChar) { currentArgument++;
+        String parameter = null;
+        try {
+            parameter = args[currentArgument];
+            intArgs.get(argChar).setInteger(Integer.parseInt(parameter));
+        } catch (ArrayIndexOutOfBoundsException e) {
+            valid = false;
+            errorArgument = argChar;
+            errorCode = ErrorCode.MISSING_INTEGER;
+        } catch (NumberFormatException e) { valid = false;
+            valid = false;
+            errorArgument = argChar;
+            errorCode = ErrorCode.INVALID_INTEGER;
         }
     }
 
@@ -165,6 +200,12 @@ class Args {
                 case MISSING_STRING:
                     return String.format("Could not find string parameter for -%c.",
                             errorArgument);
+                case MISSING_INTEGER:
+                    return String.format("Could not find integer parameter for -%c.",
+                            errorArgument);
+                case INVALID_INTEGER:
+                    return String.format("Could not parse integer parameter for -%c.",
+                            errorArgument);
                 case OK:
                     throw new Exception("TILT: Should not get here.");
             }
@@ -185,10 +226,15 @@ class Args {
         return am != null && am.getBoolean();
     }
 
-
     public String getString(char arg) {
         ArgumentMarshaler am = stringArgs.get(arg);
         return am == null ? "" : am.getString();
+    }
+
+    // ste05
+    public int getInt(char arg) {
+        ArgumentMarshaler am = intArgs.get(arg);
+        return am == null ? 0 : am.getInteger();
     }
 
     public boolean has(char arg) {
