@@ -1,32 +1,12 @@
 package cleancode.args.step06;
 
-public class ArgumentMarshaler {
-    private boolean booleanValue = false;
-    private String stringValue;
-    private int integerValue;
+public abstract class ArgumentMarshaler {   // step06 - made class abstract
+    // step06 - changed private to protected - once tests passed move do specific ArgMarshaller and removed getters and setters for specific args
+    // protected boolean booleanValue;
+    // protected String stringValue;
+    // protected int integerValue;
 
+    public abstract void set(String s);  // step06
 
-    public void setBoolean(boolean value) {
-        booleanValue = value;
-    }
-
-    public boolean getBoolean() {
-        return booleanValue;
-    }
-
-    public void setString(String s) {
-        stringValue = s;
-    }
-
-    public String getString() {
-        return stringValue == null ? "" : stringValue;
-    }
-
-    public void setInteger(int i) {
-        integerValue = i;
-    }
-
-    public int getInteger() {
-        return integerValue;
-    }
+    public abstract Object get(); // step06
 }

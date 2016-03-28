@@ -140,7 +140,7 @@ class Args {
     private void setStringArg(char argChar, String s) {
         currentArgument++;   // increment to slide, eg: from "d" to "dirName"
         try {
-            stringArgs.get(argChar).setString(args[currentArgument]);
+            stringArgs.get(argChar).set(args[currentArgument]);   // step06
         } catch (ArrayIndexOutOfBoundsException e) {
             valid = false;
             errorArgument = argChar;
@@ -157,7 +157,7 @@ class Args {
         String parameter = null;
         try {
             parameter = args[currentArgument];
-            intArgs.get(argChar).setInteger(Integer.parseInt(parameter));
+            intArgs.get(argChar).set(parameter);     // step06
         } catch (ArrayIndexOutOfBoundsException e) {
             valid = false;
             errorArgument = argChar;
@@ -174,7 +174,7 @@ class Args {
     }
 
     private void setBooleanArg(char argChar, boolean value) {
-        booleanArgs.get(argChar).setBoolean(value);
+        booleanArgs.get(argChar).set(String.valueOf(value));  // step06 - (in the book hardcoded to "true"
     }
 
     private boolean isBoolean(char argChar) {
@@ -223,18 +223,18 @@ class Args {
 
     public boolean getBoolean(char arg) {
         ArgumentMarshaler am = booleanArgs.get(arg);
-        return am != null && am.getBoolean();
+        return am != null && (Boolean)am.get();     // step06
     }
 
     public String getString(char arg) {
         ArgumentMarshaler am = stringArgs.get(arg);
-        return am == null ? "" : am.getString();
+        return am == null ? "" : (String) am.get();    // step06
     }
 
     // ste05
     public int getInt(char arg) {
         ArgumentMarshaler am = intArgs.get(arg);
-        return am == null ? 0 : am.getInteger();
+        return am == null ? 0 : (Integer)am.get();     // step06
     }
 
     public boolean has(char arg) {
