@@ -12,11 +12,7 @@ class Args {
     private boolean valid = true;
     private Set<Character> unexpectedArguments = new TreeSet<Character>();
 
-    private Map<Character, ArgumentMarshaler> booleanArgs = new HashMap<Character, ArgumentMarshaler>();
-    private Map<Character, ArgumentMarshaler> stringArgs = new HashMap<Character, ArgumentMarshaler>();
-    private Map<Character, ArgumentMarshaler> intArgs = new HashMap<Character, ArgumentMarshaler>();
-
-    private Map<Character, ArgumentMarshaler> marshalers = new HashMap<Character, ArgumentMarshaler>();   
+    private Map<Character, ArgumentMarshaler> marshalers = new HashMap<Character, ArgumentMarshaler>();   // step08
 
     private Set<Character> argsFound = new HashSet<Character>();
     private int currentArgument;
@@ -73,9 +69,7 @@ class Args {
     }
 
     private void parseStringSchemaElement(char elementId) {
-        ArgumentMarshaler m = new StringArgumentMarshaler();     
-        stringArgs.put(elementId, m); 
-        marshalers.put(elementId, m);      
+        marshalers.put(elementId, new StringArgumentMarshaler());   // step08
     }
 
     private boolean isStringSchemaElement(String elementTail) {
@@ -87,9 +81,7 @@ class Args {
     }
 
     private void parseBooleanSchemaElement(char elementId) {
-        ArgumentMarshaler m = new BooleanArgumentMarshaler();   
-        booleanArgs.put(elementId, m); 
-        marshalers.put(elementId, m);   
+        marshalers.put(elementId, new BooleanArgumentMarshaler());   // step08
     }
 
 
@@ -99,9 +91,7 @@ class Args {
 
 
     private void parseIntegerSchemaElement(char elementId) {
-        ArgumentMarshaler m = new IntegerArgumentMarshaler();   
-        intArgs.put(elementId, m); 
-        marshalers.put(elementId, m);   
+        marshalers.put(elementId, new IntegerArgumentMarshaler());   // step08
     }
 
     private boolean parseArguments() {
@@ -132,65 +122,61 @@ class Args {
         }
     }
 
+    // step08
     private boolean setArgument(char argChar) {
-        boolean set = true;
-        if (isBoolean(argChar))
-            setBooleanArg(argChar, true);   // init the booleanArgs hashMap
-        else if (isString(argChar))
-            setStringArg(argChar, "");
-        else if (isInt(argChar))
-            setIntArg(argChar);
+        ArgumentMarshaler m = marshalers.get(argChar);
+        if (m instanceof BooleanArgumentMarshaler)
+            setBooleanArg(m);   // init the booleanArgs Marshaller
+        else if (m instanceof StringArgumentMarshaler)
+            setStringArg(m);
+        else if (m instanceof IntegerArgumentMarshaler)
+            setIntArg(m);
         else
-            set = false;
-        return set;
+            return false;
+        return true;
     }
 
-    private void setStringArg(char argChar, String s) {
+    private void setStringArg(ArgumentMarshaler m) {         // step08
         currentArgument++;   // increment to slide, eg: from "d" to "dirName"
         try {
-            stringArgs.get(argChar).set(args[currentArgument]);
+            m.set(args[currentArgument]);                 // step08
         } catch (ArrayIndexOutOfBoundsException e) {
             valid = false;
-            errorArgument = argChar;
             errorCode = ErrorCode.MISSING_STRING;
         }
     }
 
-    private boolean isInt(char argChar) {
-        ArgumentMarshaler m = marshalers.get(argChar);
-        return m instanceof IntegerArgumentMarshaler;
-    }
+    // step08
+//    private boolean isInt(ArgumentMarshaler m) {
+//        return m instanceof IntegerArgumentMarshaler;   // step08 - changed to pass test before this functionality was in-lined
+//    }
 
 
-    private void setIntArg(char argChar) { currentArgument++;
+    private void setIntArg(ArgumentMarshaler m) { currentArgument++;
         String parameter = null;
         try {
             parameter = args[currentArgument];
-            intArgs.get(argChar).set(parameter);
+            m.set(parameter);
         } catch (ArrayIndexOutOfBoundsException e) {
             valid = false;
-            errorArgument = argChar;
             errorCode = ErrorCode.MISSING_INTEGER;
         } catch (NumberFormatException e) { valid = false;
             valid = false;
-            errorArgument = argChar;
             errorCode = ErrorCode.INVALID_INTEGER;
         }
     }
 
-    private boolean isString(char argChar) {
-        ArgumentMarshaler m = marshalers.get(argChar);
-        return m instanceof StringArgumentMarshaler;
+//    private boolean isString(ArgumentMarshaler m) {
+//        return m instanceof StringArgumentMarshaler;// step08 - changed to pass test before this functionality was in-lined
+//    }
+
+    private void setBooleanArg(ArgumentMarshaler m) {
+        m.set("true");
     }
 
-    private void setBooleanArg(char argChar, boolean value) {
-        booleanArgs.get(argChar).set(String.valueOf(value));  // step06 - (in the book hardcoded to "true")
-    }
-
-    private boolean isBoolean(char argChar) {
-        ArgumentMarshaler m = marshalers.get(argChar);
-        return m instanceof BooleanArgumentMarshaler;
-    }
+//    private boolean isBoolean(ArgumentMarshaler m) {
+//        return m instanceof BooleanArgumentMarshaler;   // step08 - changed to pass test before this functionality was in-lined
+//    }
 
     public int cardinality() {
         return argsFound.size();
@@ -232,19 +218,25 @@ class Args {
         return message.toString();
     }
 
+    // step08
     public boolean getBoolean(char arg) {
-        ArgumentMarshaler am = booleanArgs.get(arg);
-        return am != null && (Boolean)am.get();
+        ArgumentMarshaler am = marshalers.get(arg);
+        boolean b;
+        try {
+            b = am != null && (Boolean) am.get();
+        } catch (ClassCastException e) {            // step08 decided to deal with the ClassCastException (say acceptance test failed)
+            b = false;
+        }
+        return b;
     }
 
     public String getString(char arg) {
-        ArgumentMarshaler am = stringArgs.get(arg);
+        ArgumentMarshaler am = marshalers.get(arg);        // step08
         return am == null ? "" : (String) am.get();
     }
 
-    // ste05
     public int getInt(char arg) {
-        ArgumentMarshaler am = intArgs.get(arg);
+        ArgumentMarshaler am = marshalers.get(arg);      // step08
         return am == null ? 0 : (Integer)am.get();
     }
 
