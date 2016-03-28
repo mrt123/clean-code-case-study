@@ -55,4 +55,11 @@ public class ArgsTest {
         assertEquals("", testedObject.getString('x'));
         // not verifying call to falseIfNull since its private
     }
+
+    @Test
+    public void getInt() {
+        assertEquals(8080, testedObject.getInt('p'));
+        assertEquals(0, testedObject.getInt('x'));
+        // not verifying call to falseIfNull since its private
+    }
 }
