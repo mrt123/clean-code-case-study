@@ -1,4 +1,4 @@
-package cleancode.args.step09; // desc:   delete specific Marshaller maps (sub part2)
+package cleancode.args.step09; // desc:   completing first refactor (Listing 14-12 in the book)
 
 import lombok.Data;
 
@@ -12,7 +12,7 @@ class Args {
     private boolean valid = true;
     private Set<Character> unexpectedArguments = new TreeSet<Character>();
 
-    private Map<Character, ArgumentMarshaler> marshalers = new HashMap<Character, ArgumentMarshaler>();   // step08
+    private Map<Character, ArgumentMarshaler> marshalers = new HashMap<Character, ArgumentMarshaler>();   
 
     private Set<Character> argsFound = new HashSet<Character>();
     private int currentArgument;
@@ -69,7 +69,7 @@ class Args {
     }
 
     private void parseStringSchemaElement(char elementId) {
-        marshalers.put(elementId, new StringArgumentMarshaler());   // step08
+        marshalers.put(elementId, new StringArgumentMarshaler());   
     }
 
     private boolean isStringSchemaElement(String elementTail) {
@@ -81,7 +81,7 @@ class Args {
     }
 
     private void parseBooleanSchemaElement(char elementId) {
-        marshalers.put(elementId, new BooleanArgumentMarshaler());   // step08
+        marshalers.put(elementId, new BooleanArgumentMarshaler());   
     }
 
 
@@ -91,7 +91,7 @@ class Args {
 
 
     private void parseIntegerSchemaElement(char elementId) {
-        marshalers.put(elementId, new IntegerArgumentMarshaler());   // step08
+        marshalers.put(elementId, new IntegerArgumentMarshaler());   
     }
 
     private boolean parseArguments() {
@@ -122,7 +122,6 @@ class Args {
         }
     }
 
-    // step08
     private boolean setArgument(char argChar) {
         ArgumentMarshaler m = marshalers.get(argChar);
         if (m instanceof BooleanArgumentMarshaler)
@@ -136,21 +135,15 @@ class Args {
         return true;
     }
 
-    private void setStringArg(ArgumentMarshaler m) {         // step08
+    private void setStringArg(ArgumentMarshaler m) {         
         currentArgument++;   // increment to slide, eg: from "d" to "dirName"
         try {
-            m.set(args[currentArgument]);                 // step08
+            m.set(args[currentArgument]);                 
         } catch (ArrayIndexOutOfBoundsException e) {
             valid = false;
             errorCode = ErrorCode.MISSING_STRING;
         }
     }
-
-    // step08
-//    private boolean isInt(ArgumentMarshaler m) {
-//        return m instanceof IntegerArgumentMarshaler;   // step08 - changed to pass test before this functionality was in-lined
-//    }
-
 
     private void setIntArg(ArgumentMarshaler m) { currentArgument++;
         String parameter = null;
@@ -166,17 +159,9 @@ class Args {
         }
     }
 
-//    private boolean isString(ArgumentMarshaler m) {
-//        return m instanceof StringArgumentMarshaler;// step08 - changed to pass test before this functionality was in-lined
-//    }
-
     private void setBooleanArg(ArgumentMarshaler m) {
         m.set("true");
     }
-
-//    private boolean isBoolean(ArgumentMarshaler m) {
-//        return m instanceof BooleanArgumentMarshaler;   // step08 - changed to pass test before this functionality was in-lined
-//    }
 
     public int cardinality() {
         return argsFound.size();
@@ -218,25 +203,24 @@ class Args {
         return message.toString();
     }
 
-    // step08
     public boolean getBoolean(char arg) {
         ArgumentMarshaler am = marshalers.get(arg);
         boolean b;
         try {
             b = am != null && (Boolean) am.get();
-        } catch (ClassCastException e) {            // step08 decided to deal with the ClassCastException (say acceptance test failed)
+        } catch (ClassCastException e) {
             b = false;
         }
         return b;
     }
 
     public String getString(char arg) {
-        ArgumentMarshaler am = marshalers.get(arg);        // step08
+        ArgumentMarshaler am = marshalers.get(arg);        
         return am == null ? "" : (String) am.get();
     }
 
     public int getInt(char arg) {
-        ArgumentMarshaler am = marshalers.get(arg);      // step08
+        ArgumentMarshaler am = marshalers.get(arg);      
         return am == null ? 0 : (Integer)am.get();
     }
 
