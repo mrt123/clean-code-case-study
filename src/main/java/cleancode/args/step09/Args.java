@@ -19,7 +19,7 @@ class Args {
     private char errorArgument = '\0';
 
     enum ErrorCode {
-        OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER
+        OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER, UNEXPECTED_ARGUMENT
     }
 
     private ErrorCode errorCode = ErrorCode.OK;
@@ -52,13 +52,18 @@ class Args {
         return true;
     }
 
+    // step09 inlined is*() functionality (and removed redundant methods
     private void parseSchemaElement(String element) throws ParseException {
-        char elementId = element.charAt(0);  // element = "l" or "d*"
-        String elementTail = element.substring(1);   // elementTail = ""  or "*"
+        char elementId = element.charAt(0);  // element = "l" or "d*" or "p#"
+        String elementTail = element.substring(1);   // elementTail = ""  or "*" or "#"
         validateSchemaElementId(elementId);  // elementId = "l" or "d"
-        if (isBooleanSchemaElement(elementTail)) parseBooleanSchemaElement(elementId);  // true if elementTail =""
-        else if (isStringSchemaElement(elementTail)) parseStringSchemaElement(elementId);  // true if elementTail ="*"
-        else if (isIntegerSchemaElement(elementTail)) parseIntegerSchemaElement(elementId);  // true if elementTail ="#"
+        if (isBooleanSchemaElement(elementTail))       // true if elementTail =""
+            marshalers.put(elementId, new BooleanArgumentMarshaler());
+        else if (isStringSchemaElement(elementTail))        // true if elementTail ="*"
+            marshalers.put(elementId, new StringArgumentMarshaler());
+        else if (isIntegerSchemaElement(elementTail)) {             // true if elementTail ="#"
+            marshalers.put(elementId, new IntegerArgumentMarshaler());
+        }
     }
 
     private void validateSchemaElementId(char elementId) throws ParseException {
@@ -66,10 +71,6 @@ class Args {
             throw new ParseException(
                     "Bad character:" + elementId + "in Args format: " + schema, 0);
         }
-    }
-
-    private void parseStringSchemaElement(char elementId) {
-        marshalers.put(elementId, new StringArgumentMarshaler());   
     }
 
     private boolean isStringSchemaElement(String elementTail) {
@@ -80,18 +81,8 @@ class Args {
         return elementTail.length() == 0;
     }
 
-    private void parseBooleanSchemaElement(char elementId) {
-        marshalers.put(elementId, new BooleanArgumentMarshaler());   
-    }
-
-
     private boolean isIntegerSchemaElement(String elementTail) {
         return elementTail.equals("#");
-    }
-
-
-    private void parseIntegerSchemaElement(char elementId) {
-        marshalers.put(elementId, new IntegerArgumentMarshaler());   
     }
 
     private boolean parseArguments() {
