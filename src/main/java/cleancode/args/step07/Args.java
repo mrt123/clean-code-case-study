@@ -74,6 +74,7 @@ class Args {
 
     private void parseStringSchemaElement(char elementId) {
         ArgumentMarshaler m = new StringArgumentMarshaler();     // step07
+        stringArgs.put(elementId, m);       // step07  keep this for tests to pass
         marshalers.put(elementId, m);      // step07
     }
 
@@ -87,6 +88,7 @@ class Args {
 
     private void parseBooleanSchemaElement(char elementId) {
         ArgumentMarshaler m = new BooleanArgumentMarshaler();   // step07
+        booleanArgs.put(elementId, m);       // step07  keep this for tests to pass
         marshalers.put(elementId, m);   // step07
     }
 
@@ -98,6 +100,7 @@ class Args {
 
     private void parseIntegerSchemaElement(char elementId) {
         ArgumentMarshaler m = new IntegerArgumentMarshaler();   // step07
+        intArgs.put(elementId, m);       // step07  keep this for tests to pass
         marshalers.put(elementId, m);   // step07
     }
 
@@ -154,8 +157,8 @@ class Args {
     }
 
     private boolean isInt(char argChar) {
-        ArgumentMarshaler m = marshalers.get(argChar);   // step07
-        return m instanceof IntegerArgumentMarshaler;   // step07
+        ArgumentMarshaler m = marshalers.get(argChar);
+        return m instanceof IntegerArgumentMarshaler;
     }
 
 
@@ -176,8 +179,8 @@ class Args {
     }
 
     private boolean isString(char argChar) {
-        ArgumentMarshaler m = marshalers.get(argChar);   // step07
-        return m instanceof StringArgumentMarshaler;   // step07
+        ArgumentMarshaler m = marshalers.get(argChar);
+        return m instanceof StringArgumentMarshaler;
     }
 
     private void setBooleanArg(char argChar, boolean value) {
@@ -185,8 +188,8 @@ class Args {
     }
 
     private boolean isBoolean(char argChar) {
-        ArgumentMarshaler m = marshalers.get(argChar);   // step07
-        return m instanceof BooleanArgumentMarshaler;   // step07
+        ArgumentMarshaler m = marshalers.get(argChar);
+        return m instanceof BooleanArgumentMarshaler;
     }
 
     public int cardinality() {
