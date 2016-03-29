@@ -14,15 +14,15 @@ import java.util.*;
 public @Data
 class Args {
     private String schema;
-    private String[] args;
     private boolean valid = true;
     private Set<Character> unexpectedArguments = new TreeSet<Character>();
 
     private Map<Character, ArgumentMarshaler> marshalers = new HashMap<Character, ArgumentMarshaler>();
 
     private Set<Character> argsFound = new HashSet<Character>();
-    private int currentArgument;
+    private Iterator<String> currentArgument;   // step 10
     private char errorArgument = '\0';
+    private List<String> argsList;    // step 10
 
     enum ErrorCode {
         OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER, UNEXPECTED_ARGUMENT
@@ -32,7 +32,7 @@ class Args {
 
     public Args(String schema, String[] args) throws ParseException {
         this.schema = schema;
-        this.args = args;
+        argsList = Arrays.asList(args);  // step 10
         valid = parse();
     }
 
@@ -41,7 +41,7 @@ class Args {
     }
 
     private boolean parse() throws ParseException {
-        if (schema.length() == 0 && args.length == 0)
+        if (schema.length() == 0 && argsList.size() == 0)   // step 10
             return true;
         parseSchema();
         parseArguments();
@@ -91,8 +91,8 @@ class Args {
     }
 
     private boolean parseArguments() {
-        for (currentArgument = 0; currentArgument < args.length; currentArgument++) {
-            String arg = args[currentArgument];
+        for (currentArgument = argsList.iterator(); currentArgument.hasNext(); ) {  // step 10
+            String arg = currentArgument.next();    // step 10
             parseArgument(arg);
         }
         return true;
@@ -120,21 +120,23 @@ class Args {
 
     private boolean setArgument(char argChar) {
         ArgumentMarshaler m = marshalers.get(argChar);
+
+        if (m == null)    // step10 to eliminate error condition from below if-else chain before eliminating the chain itself
+            return false;
+
         if (m instanceof BooleanArgumentMarshaler)
             setBooleanArg(m);   // init the booleanArgs Marshaller
         else if (m instanceof StringArgumentMarshaler)
             setStringArg(m);
         else if (m instanceof IntegerArgumentMarshaler)
             setIntArg(m);
-        else
-            return false;
+
         return true;
     }
 
     private void setStringArg(ArgumentMarshaler m) {
-        currentArgument++;   // increment to slide, eg: from "d" to "dirName"
         try {
-            m.set(args[currentArgument]);
+            m.set(currentArgument.next());    // move iterator forward, eg: from "d" to "dirName" // step 10
         } catch (ArrayIndexOutOfBoundsException e) {
             valid = false;
             errorCode = ErrorCode.MISSING_STRING;
@@ -142,15 +144,14 @@ class Args {
     }
 
     private void setIntArg(ArgumentMarshaler m) {
-        currentArgument++;
         String parameter = null;
         try {
-            parameter = args[currentArgument];
+            parameter = currentArgument.next();   // step 10
             m.set(parameter);
         } catch (ArrayIndexOutOfBoundsException e) {
             valid = false;
             errorCode = ErrorCode.MISSING_INTEGER;
-        } catch (NumberFormatException e) { valid = false;
+        } catch (NumberFormatException e) {
             valid = false;
             errorCode = ErrorCode.INVALID_INTEGER;
         }

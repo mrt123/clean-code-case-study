@@ -5,61 +5,62 @@ import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * step10 conclusions:
+ * - test only public methods
+ * - test should never consider internals of a method
+  */
+
+
+
 public class ArgsTest {
 
-    Args testedObject;
-    final String validSchema = "l,p#,d*";
-    final String[] validCommandArgs = {"-l", "true", "-d", "folder1", "-p", "8080"};
+    Args validArgs, invalidArgs;
 
     @org.junit.Before
     public void setUp() throws Exception {
-        testedObject = new Args("l,p#,d*", validCommandArgs);
+        // ARRANGE
+        String schema1 = "l,p#,d*";
+        String[] args1 = {"-l", "true", "-d", "folder1", "-p", "8080"};
+
+        String schema2 = "l,p#,z*";
+        String[] args2 = {"-l", "true", "-d", "folder1", "-p", "8080"};
+
+        // ACT
+        validArgs = new Args(schema1, args1);
+        invalidArgs = new Args(schema2, args2);
     }
 
     @org.junit.After
     public void tearDown() throws Exception {
     }
 
+    // step10 - modified constructor test
     @Test
-    public void constructor() {
-        assertEquals(validSchema, testedObject.getSchema());
-        assertArrayEquals(validCommandArgs, testedObject.getArgs());
-    }
-
-    @Test
-    public void isValid() {
-        assertEquals(true, testedObject.isValid());
-        testedObject.setValid(false);
-        assertEquals(false, testedObject.isValid());
+    public void isValid() throws Exception {
+        assertEquals(true, validArgs.isValid());
+        assertEquals(false, invalidArgs.isValid());
     }
 
     @Test
     public void getBoolean() {
         char existingArgument1 = 'l';
-        char existingArgument2= 'd';
-        char existingArgument3= 'p';
         char nonExistingArgument = 'y';
 
-        assertEquals(true, testedObject.getBoolean(existingArgument1));
-        assertEquals(false, testedObject.getBoolean(nonExistingArgument));
+        assertEquals(true, validArgs.getBoolean(existingArgument1));
+        assertEquals(false, validArgs.getBoolean(nonExistingArgument));
 
-        assertEquals("folder1", testedObject.getString(existingArgument2));
-        assertEquals(8080, testedObject.getInt(existingArgument3));
-
-        // not verifying call to falseIfNull since its private
     }
 
     @Test
     public void getString() {
-        assertEquals("folder1", testedObject.getString('d'));
-        assertEquals("", testedObject.getString('x'));
-        // not verifying call to falseIfNull since its private
+        assertEquals("folder1", validArgs.getString('d'));
+        assertEquals("", validArgs.getString('x'));
     }
 
     @Test
     public void getInt() {
-        assertEquals(8080, testedObject.getInt('p'));
-        assertEquals(0, testedObject.getInt('x'));
-        // not verifying call to falseIfNull since its private
+        assertEquals(8080, validArgs.getInt('p'));
+        assertEquals(0, validArgs.getInt('x'));
     }
 }
