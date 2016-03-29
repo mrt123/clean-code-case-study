@@ -1,10 +1,13 @@
 package cleancode.args.step11;
 
-public class BooleanArgumentMarshaler extends ArgumentMarshaler {
+import java.util.Iterator;
+
+public class BooleanArgumentMarshaler implements ArgumentMarshaler {
     private boolean booleanValue = false;
 
-    public void set(String s) {
-        booleanValue = true;    // step06 - as per book
+    // step11
+    public void set(Iterator<String> currentArgument) {
+        booleanValue = true;
     }
 
     public Object get() {

@@ -1,9 +1,10 @@
 package cleancode.args.step11;
 
-public abstract class ArgumentMarshaler {
+import java.util.Iterator;
 
+public interface ArgumentMarshaler {  // step11 changed to interface
 
-    public abstract void set(String s);
+    void set(Iterator<String> currentArgument);  // step11
 
-    public abstract Object get();
+    Object get();
 }

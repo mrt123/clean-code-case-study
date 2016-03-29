@@ -124,41 +124,9 @@ class Args {
         if (m == null)
             return false;
 
-        if (m instanceof BooleanArgumentMarshaler)
-            setBooleanArg(m);   // init the booleanArgs Marshaller
-        else if (m instanceof StringArgumentMarshaler)
-            setStringArg(m);
-        else if (m instanceof IntegerArgumentMarshaler)
-            setIntArg(m);
+        m.set(currentArgument);  // step11
 
         return true;
-    }
-
-    private void setStringArg(ArgumentMarshaler m) {
-        try {
-            m.set(currentArgument.next());    // move iterator forward, eg: from "d" to "dirName"
-        } catch (ArrayIndexOutOfBoundsException e) {
-            valid = false;
-            errorCode = ErrorCode.MISSING_STRING;
-        }
-    }
-
-    private void setIntArg(ArgumentMarshaler m) {
-        String parameter = null;
-        try {
-            parameter = currentArgument.next();
-            m.set(parameter);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            valid = false;
-            errorCode = ErrorCode.MISSING_INTEGER;
-        } catch (NumberFormatException e) {
-            valid = false;
-            errorCode = ErrorCode.INVALID_INTEGER;
-        }
-    }
-
-    private void setBooleanArg(ArgumentMarshaler m) {
-        m.set("true");
     }
 
     public int cardinality() {

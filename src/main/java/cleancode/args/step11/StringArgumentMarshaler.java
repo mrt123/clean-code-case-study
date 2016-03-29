@@ -1,12 +1,14 @@
 package cleancode.args.step11;
 
+import java.util.Iterator;
 
-public class StringArgumentMarshaler extends ArgumentMarshaler {
+public class StringArgumentMarshaler implements ArgumentMarshaler {
 
     private String stringValue = "";
 
-    public void set(String s) {
-        stringValue = s;
+    // step11
+    public void set(Iterator<String> currentArgument) {
+        stringValue = currentArgument.next();
     }
 
     public Object get() {
