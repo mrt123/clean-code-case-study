@@ -2,7 +2,7 @@ package cleancode.args.step12;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * step10 conclusions:
@@ -62,4 +62,12 @@ public class ArgsTest {
         assertEquals(8080, validArgs.getInt('p'));
         assertEquals(0, validArgs.getInt('x'));
     }
+
+    @Test    // straight from the book step12
+    public void testSimpleDoublePresent() throws Exception {
+        Args args = new Args("x##", new String[] {"-x","42.3"});
+        assertTrue(args.isValid());
+        assertEquals(1, args.cardinality());
+        assertTrue(args.has('x'));
+        assertEquals(42.3, args.getDouble('x'), .001); }
 }

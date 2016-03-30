@@ -69,6 +69,8 @@ class Args {
         else if (isIntegerSchemaElement(elementTail)) {             // true if elementTail ="#"
             marshalers.put(elementId, new IntegerArgumentMarshaler());
         }
+        else if (elementTail.equals("##"))  // step12
+            marshalers.put(elementId, new DoubleArgumentMarshaler());
     }
 
     private void validateSchemaElementId(char elementId) throws ParseException {
@@ -188,6 +190,17 @@ class Args {
     public int getInt(char arg) {
         ArgumentMarshaler am = marshalers.get(arg);
         return am == null ? 0 : (Integer)am.get();
+    }
+
+    // step12
+    public double getDouble(char arg) {
+        ArgumentMarshaler am = marshalers.get(arg);
+
+        try {
+            return am == null ? 0 : (Double) am.get();
+        } catch (Exception e) {
+            return 0.0;
+        }
     }
 
     public boolean has(char arg) {
