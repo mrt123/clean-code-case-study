@@ -11,8 +11,8 @@ public class ComparisonCompactor {
     private int contextLength;
     private String expected;
     private String actual;
-    private int prefixLength;
-    private int suffixLength;
+    private int prefixLength;       //index at which first character differs
+    private int suffixLength;    // default = 0
 
     public ComparisonCompactor(int contextLength, String expected, String actual) {
         this.contextLength = contextLength;
@@ -42,9 +42,9 @@ public class ComparisonCompactor {
     }
 
     private void findCommonPrefixAndSuffix() {
-        findCommonPrefix();
-        suffixLength = 0;
-        for (; !suffixOverlapsPrefix(); suffixLength++) {
+        findCommonPrefix();   // initializes prefixLength   - index at which first character differs
+        suffixLength = 0;   // below initializes prefixLength
+        for (; !suffixOverlapsPrefix(); suffixLength++) {   // iteratively check if
             if (charFromEnd(expected, suffixLength) != charFromEnd(actual, suffixLength))
                 break;
         }
@@ -70,7 +70,7 @@ public class ComparisonCompactor {
 
     private String compact(String s) {
         return new StringBuilder()
-                .append(startingEllipsis())
+                .append(startingEllipsis())     // "..." or ""
                 .append(startingContext())
                 .append(DELTA_START)
                 .append(delta(s))
