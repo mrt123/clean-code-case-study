@@ -1,4 +1,4 @@
-package cleancode.junit;
+package cleancode.junit.step09;
 
 import junit.framework.TestCase;
 
