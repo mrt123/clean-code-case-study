@@ -4,15 +4,14 @@ import junit.framework.Assert;
 
 public class ComparisonCompactor {
 
-
-    private static final String ELLIPSIS = "...";
+    private static final String ELLIPSIS = "...";   // shows when  contextLength < diffIndexFromStart
     private static final String DELTA_END = "]";
     private static final String DELTA_START = "[";
     private int contextLength;
     private String expected;
     private String actual;
-    private int prefixLength;       //index at which first character differs
-    private int suffixLength;    // default = 0
+    private int diffIndexFromStart;       // index at which first character differs counting from start of expected string
+    private int diffIndexFromEnd;    // index at which first character differs counting from the end of expected string
 
     public ComparisonCompactor(int contextLength, String expected, String actual) {
         this.contextLength = contextLength;
@@ -29,6 +28,7 @@ public class ComparisonCompactor {
             compactExpected = compact(expected);
             compactActual = compact(actual);
         }
+        // System.out.print(diffIndexFromStart + "," + diffIndexFromEnd);
         return Assert.format(message, compactExpected, compactActual);
     }
 
@@ -42,30 +42,46 @@ public class ComparisonCompactor {
     }
 
     private void findCommonPrefixAndSuffix() {
-        findCommonPrefix();   // initializes prefixLength   - index at which first character differs
-        suffixLength = 0;   // below initializes prefixLength
-        for (; !suffixOverlapsPrefix(); suffixLength++) {   // iteratively check if
-            if (charFromEnd(expected, suffixLength) != charFromEnd(actual, suffixLength))
-                break;
-        }
+        this.diffIndexFromStart = getDiffIndexFromStart();   // initializes diffIndexFromStart   - index at which first character differs
+        this.diffIndexFromEnd = getDiffIndexFromEnd();
     }
 
-    private char charFromEnd(String s, int i) {
+    private int getDiffIndexFromEnd() {
+        int diffIndexFromEnd = 0;
+
+        // TODO: show meaning of suffixOverlapsPrefix() via name or clean logic
+        for (; !suffixOverlapsPrefix(diffIndexFromEnd); diffIndexFromEnd++) {
+
+            if (!expectedCharactersFromTailEquals(expected, actual, diffIndexFromEnd)) {
+                break;
+            }
+        }
+        return diffIndexFromEnd;
+    }
+
+    private boolean expectedCharactersFromTailEquals(String expected, String actual, int index) {
+        char expectedCharacterFromEnd = getCharacterFromStringTail(expected, index);
+        char actualCharacterFromEnd = getCharacterFromStringTail(actual, index);
+        return expectedCharacterFromEnd == actualCharacterFromEnd;
+    }
+
+
+    private char getCharacterFromStringTail(String s, int i) {
         return s.charAt(s.length() - i - 1);
     }
 
-    private boolean suffixOverlapsPrefix() {
-        return actual.length() - suffixLength <= prefixLength || expected.length() - suffixLength <= prefixLength;
+    private boolean suffixOverlapsPrefix(int suffixIndex) {
+        return actual.length() - suffixIndex <= diffIndexFromStart || expected.length() - suffixIndex <= diffIndexFromStart;
     }
 
-    private void findCommonPrefix() {
-        prefixLength = 0;
+    private int getDiffIndexFromStart() {
+        int diffStartIndex = 0;
         int end = Math.min(expected.length(), actual.length());
-        for (; prefixLength < end; prefixLength++)
-        {
-            if (expected.charAt(prefixLength) != actual.charAt(prefixLength))
+        for (; diffStartIndex < end; diffStartIndex++) {
+            if (expected.charAt(diffStartIndex) != actual.charAt(diffStartIndex))
                 break;
         }
+        return diffStartIndex;
     }
 
     private String compact(String s) {
@@ -81,28 +97,28 @@ public class ComparisonCompactor {
     }
 
     private String startingEllipsis() {
-        return prefixLength > contextLength ? ELLIPSIS : "";
+        return diffIndexFromStart > contextLength ? ELLIPSIS : "";
     }
 
     private String startingContext() {
-        int contextStart = Math.max(0, prefixLength - contextLength);
-        int contextEnd = prefixLength;
+        int contextStart = Math.max(0, diffIndexFromStart - contextLength);
+        int contextEnd = diffIndexFromStart;
         return expected.substring(contextStart, contextEnd);
     }
 
     private String delta(String s) {
-        int deltaStart = prefixLength;
-        int deltaEnd = s.length() - suffixLength;
+        int deltaStart = diffIndexFromStart;
+        int deltaEnd = s.length() - diffIndexFromEnd;
         return s.substring(deltaStart, deltaEnd);
     }
 
     private String endingContext() {
-        int contextStart = expected.length() - suffixLength;
+        int contextStart = expected.length() - diffIndexFromEnd;
         int contextEnd = Math.min(contextStart + contextLength, expected.length());
         return expected.substring(contextStart, contextEnd);
     }
 
     private String endingEllipsis() {
-        return (suffixLength > contextLength ? ELLIPSIS : "");
+        return (diffIndexFromEnd > contextLength ? ELLIPSIS : "");
     }
 }
