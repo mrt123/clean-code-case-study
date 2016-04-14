@@ -33,12 +33,8 @@ public class ComparisonCompactor {
     }
 
     private boolean shouldBeCompacted() {
-        return !shouldNotBeCompacted();
-    }
-
-    private boolean shouldNotBeCompacted() {
-        return expected == null ||
-                actual == null || expected.equals(actual);
+        return expected != null &&
+                actual != null && !expected.equals(actual);
     }
 
     private void findCommonPrefixAndSuffix() {
