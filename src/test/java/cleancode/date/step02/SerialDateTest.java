@@ -1,4 +1,4 @@
-package cleancode.date;
+package cleancode.date.step02;
 
 /* ========================================================================
  * JCommon : a free general purpose class library for the Java(tm) platform
@@ -46,16 +46,11 @@ package cleancode.date;
  *
  */
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import java.io.*;
 
 /**
  * Some JUnit tests for the {@link SerialDate} class.

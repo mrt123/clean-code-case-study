@@ -1,4 +1,4 @@
-package cleancode.date;
+package cleancode.date.step01;
 
 /* ========================================================================
  * JCommon : a free general purpose class library for the Java(tm) platform
@@ -129,7 +129,7 @@ public class SpreadsheetDate extends SerialDate {
             );
         }
 
-        if ((day >= 1) && (day <= SerialDate.lastDayOfMonth(month, year))) {
+        if ((day >= 1) && (day <= lastDayOfMonth(month, year))) {
             this.day = day;
         }
         else {
@@ -381,7 +381,7 @@ public class SpreadsheetDate extends SerialDate {
      * @return A boolean.
      */
     public boolean isInRange(final SerialDate d1, final SerialDate d2) {
-        return isInRange(d1, d2, SerialDate.INCLUDE_BOTH);
+        return isInRange(d1, d2, INCLUDE_BOTH);
     }
 
     /**
@@ -405,13 +405,13 @@ public class SpreadsheetDate extends SerialDate {
         final int end = Math.max(s1, s2);
 
         final int s = toSerial();
-        if (include == SerialDate.INCLUDE_BOTH) {
+        if (include == INCLUDE_BOTH) {
             return (s >= start && s <= end);
         }
-        else if (include == SerialDate.INCLUDE_FIRST) {
+        else if (include == INCLUDE_FIRST) {
             return (s >= start && s < end);
         }
-        else if (include == SerialDate.INCLUDE_SECOND) {
+        else if (include == INCLUDE_SECOND) {
             return (s > start && s <= end);
         }
         else {
@@ -431,10 +431,10 @@ public class SpreadsheetDate extends SerialDate {
      * @return the serial number from the day, month and year.
      */
     private int calcSerial(final int d, final int m, final int y) {
-        final int yy = ((y - 1900) * 365) + SerialDate.leapYearCount(y - 1);
-        int mm = SerialDate.AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH[m];
+        final int yy = ((y - 1900) * 365) + leapYearCount(y - 1);
+        int mm = AGGREGATE_DAYS_TO_END_OF_PRECEDING_MONTH[m];
         if (m > MonthConstants.FEBRUARY) {
-            if (SerialDate.isLeapYear(y)) {
+            if (isLeapYear(y)) {
                 mm = mm + 1;
             }
         }
@@ -451,7 +451,7 @@ public class SpreadsheetDate extends SerialDate {
         final int days = this.serial - SERIAL_LOWER_BOUND;
         // overestimated because we ignored leap days
         final int overestimatedYYYY = 1900 + (days / 365);
-        final int leaps = SerialDate.leapYearCount(overestimatedYYYY);
+        final int leaps = leapYearCount(overestimatedYYYY);
         final int nonleapdays = days - leaps;
         // underestimated because we overestimated years
         int underestimatedYYYY = 1900 + (nonleapdays / 365);

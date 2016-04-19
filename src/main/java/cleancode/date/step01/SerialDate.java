@@ -1,4 +1,4 @@
-package cleancode.date;
+package cleancode.date.step01;
 
 // FROM : https://github.com/ludwiggj/CleanCode/.../chapter16/
 
@@ -66,7 +66,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import static cleancode.date.MonthConstants.*;
+import static cleancode.date.step01.MonthConstants.*;
 
 /**
  * An abstract class that defines our requirements for manipulating dates,
@@ -87,8 +87,7 @@ import static cleancode.date.MonthConstants.*;
  *
  * @author David Gilbert
  */
-public abstract class SerialDate implements Comparable,
-        Serializable {
+public abstract class SerialDate implements Comparable, Serializable {
 
     /**
      * For serialization.
@@ -449,8 +448,7 @@ public abstract class SerialDate implements Comparable,
      * @return a string representing the supplied month.
      * @throws java.lang.IllegalArgumentException
      */
-    public static String monthCodeToString(final int month,
-                                           final boolean shortened) {
+    public static String monthCodeToString(final int month, final boolean shortened) {
 
         // check arguments...
         if (!isValidMonthCode(month)) {
@@ -622,8 +620,7 @@ public abstract class SerialDate implements Comparable,
      * @param base   the base date.
      * @return a new date.
      */
-    public static SerialDate addMonths(final int months,
-                                       final SerialDate base) {
+    public static SerialDate addMonths(final int months, final SerialDate base) {
 
         final int yy = (12 * base.getYYYY() + base.getMonth() + months - 1)
                 / 12;
@@ -668,8 +665,7 @@ public abstract class SerialDate implements Comparable,
      * @return the latest date that falls on the specified day-of-the-week and
      * is BEFORE the base date.
      */
-    public static SerialDate getPreviousDayOfWeek(final int targetWeekday,
-                                                  final SerialDate base) {
+    public static SerialDate getPreviousDayOfWeek(final int targetWeekday, final SerialDate base) {
 
         // check arguments...
         if (!SerialDate.isValidWeekdayCode(targetWeekday)) {
@@ -700,8 +696,7 @@ public abstract class SerialDate implements Comparable,
      * @return the earliest date that falls on the specified day-of-the-week
      * and is AFTER the base date.
      */
-    public static SerialDate getFollowingDayOfWeek(final int targetWeekday,
-                                                   final SerialDate base) {
+    public static SerialDate getFollowingDayOfWeek(final int targetWeekday, final SerialDate base) {
 
         // check arguments...
         if (!SerialDate.isValidWeekdayCode(targetWeekday)) {
@@ -731,8 +726,7 @@ public abstract class SerialDate implements Comparable,
      * @return the date that falls on the specified day-of-the-week and is
      * CLOSEST to the base date.
      */
-    public static SerialDate getNearestDayOfWeek(final int targetDOW,
-                                                 final SerialDate base) {
+    public static SerialDate getNearestDayOfWeek(final int targetDOW, final SerialDate base) {
 
         // check arguments...
         if (!SerialDate.isValidWeekdayCode(targetDOW)) {
@@ -826,8 +820,7 @@ public abstract class SerialDate implements Comparable,
      * @param yyyy  the year (in the range 1900 to 9999).
      * @return An instance of {@link SerialDate}.
      */
-    public static SerialDate createInstance(final int day, final int month,
-                                            final int yyyy) {
+    public static SerialDate createInstance(final int day, final int month, final int yyyy) {
         return new SpreadsheetDate(day, month, yyyy);
     }
 
